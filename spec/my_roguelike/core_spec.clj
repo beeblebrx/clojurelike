@@ -23,13 +23,7 @@
               (should (vector? (key (first (:tilebuffer (level-generator))))))
               (should= 2 (count (key (first (:tilebuffer (level-generator)))))))
           (it "should represent a tile in the buffer with a Tile record"
-              (should (instance? my_roguelike.core.Tile (val (first (:tilebuffer (level-generator)))))))
-          (it "should create a square 5x5 room at 0,0 with the square arena generator"
-              (let [level (level-generator (square-arena 5))]
-                (should= 25 (count (:tilebuffer level)))
-                (doseq [x (range 5)
-                        y (range 5)]
-                  (should (get-in level [:tilebuffer [x y]]))))))
+              (should (instance? my_roguelike.core.Tile (val (first (:tilebuffer (level-generator))))))))
 
 (describe "Square room generator"
           (it "should create a square room at given coords with the given size"
