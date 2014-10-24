@@ -5,6 +5,10 @@
 (load "roomgens")
 (load "levelgens")
 
+(defn get-glyph
+  [tile-type]
+  (get {:floor ".", :wall "#"} tile-type))
+
 (defn generate-world
   [levels]
   (loop [map-of-levels {}
@@ -26,8 +30,9 @@
   (s/clear screen)
   (doseq [x (range 80)
           y (range 25)]
-    (if (not (nil? (get-in game [:world :1 :tilebuffer [x y]])))
-      (s/put-string screen x y ".")))
+    (let [tile (get-in game [:world :1 :tilebuffer [x y]])]
+      (when (not (nil? tile))
+        (s/put-string screen x y (get-glyph (:type tile))))))
   (s/redraw screen)
   (s/get-key-blocking screen))
 

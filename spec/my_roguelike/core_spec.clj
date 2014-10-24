@@ -33,4 +33,20 @@
                 (should= 49 (count room))
                 (doseq [x (range start-x (+ start-x 7))
                         y (range start-y (+ start-y 7))]
-                  (should (get room [x y]))))))
+                  (should (get room [x y])))))
+          (it "should surround the room with walls"
+              (let [room ((square-room-gen 0 0 3))]
+                (doseq [x (range 3)
+                        y (range 3)]
+                  (if (= x y 1)
+                    (should= :floor (:type (get room [x y])))
+                    (should= :wall (:type (get room [x y]))))))))
+
+(describe "Level drawing"
+          (it "should draw floor tiles with '.' and walls with '#'"
+              (doall (map #(let [type (:type (val %))
+                                 glyph (get-glyph type)]
+                             (if (= type :floor)
+                               (should= "." glyph)
+                               (should= "#" glyph)))
+                          (:tilebuffer (level-generator))))))
