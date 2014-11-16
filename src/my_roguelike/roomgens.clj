@@ -2,21 +2,23 @@
 
 (defrecord Tile [type lit])
 
-(defn get-sqr-room-tile
-  [x y start-x start-y size]
-  (if (or (= x start-x)
-          (= x (+ start-x (dec size)))
-          (= y start-y)
-          (= y (+ start-y (dec size))))
+(defn sqr-room-tile-type
+  [n size]
+  (if (or (< n size)
+          (> n (- (* size size) size))
+          (= 0 (mod n size))
+          (= (dec size) (rem n size)))
     :wall
     :floor))
 
 (defn square-room-gen
   ([start-x start-y size]
-     (fn [] (into {}
-                  (for [x (range start-x (+ start-x size))
-                        y (range start-y (+ start-y size))
-                        :let [tile-map {[x y] (Tile.
-                                               (get-sqr-room-tile x y start-x start-y size)
-                                               true)}]]
-                    tile-map)))))
+     (fn []
+       (when (> size 0)
+         (loop [n 0
+                tiles {}]
+           (if (= n (* size size))
+             tiles
+             (recur (inc n) (assoc tiles [(+ start-x (mod n size))
+                                          (+ start-y (quot n size))]
+                                   (Tile. (sqr-room-tile-type n size) true)))))))))
