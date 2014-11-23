@@ -33,14 +33,21 @@
                 (should= 49 (count room))
                 (doseq [x (range start-x (+ start-x 7))
                         y (range start-y (+ start-y 7))]
-                  (should (get room [x y])))))
-          (it "should surround the room with walls"
+                  (should (get room [x y]))))))
+
+(describe "Wall builder"
+          (it "should create walls around a square room"
               (let [room ((square-room-gen 0 0 3))]
                 (doseq [x (range 3)
                         y (range 3)]
-                  (if (= x y 1)
-                    (should= :floor (:type (get room [x y])))
-                    (should= :wall (:type (get room [x y]))))))))
+                  (should= :floor (:type (get room [x y]))))
+                (let [walled-room (build-walls room)]
+                  (doseq [x (range -1 4)
+                          y (range -1 4)]
+                    (if (or (or (= x -1) (= x 3))
+                            (or (= y -1) (= y 3)))
+                      (should= :wall (:type (get walled-room [x y])))
+                      (should= :floor (:type (get walled-room [x y])))))))))
 
 (describe "Level drawing"
           (it "should draw floor tiles with '.' and walls with '#'"

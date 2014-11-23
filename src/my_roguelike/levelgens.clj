@@ -5,6 +5,6 @@
   (square-room-gen x y size))
 
 (defn level-generator
-  ([] (level-generator (square-arena 0 0 3)))
+  ([] (level-generator (square-arena 1 1 3)))
   ([generator]
-     {:tilebuffer (generator)}))
+     {:tilebuffer (build-walls (generator))}))

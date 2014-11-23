@@ -2,14 +2,28 @@
 
 (defrecord Tile [type lit])
 
-(defn sqr-room-tile-type
-  [n size]
-  (if (or (< n size)
-          (> n (- (* size size) size))
-          (= 0 (mod n size))
-          (= (dec size) (rem n size)))
-    :wall
-    :floor))
+(defn surrounding-coords
+  [x y]
+  (for [xx [(dec x) x (inc x)]
+        yy [(dec y) y (inc y)]]
+    [xx yy]))
+
+(defn get-wall-coords
+  [tilebuffer]
+  (reduce into #{}
+          (map #(for [tile-xy (surrounding-coords (first %) (second %))
+                      :when (nil? (tilebuffer tile-xy))]
+                  tile-xy)
+               (keys tilebuffer))))
+
+(defn build-walls
+  [tilebuffer]
+  (loop [tiles tilebuffer
+         walls (get-wall-coords tilebuffer)]
+    (if (empty? walls)
+      tiles
+      (recur (assoc tiles (first walls) (Tile. :wall false))
+             (rest walls)))))
 
 (defn square-room-gen
   ([start-x start-y size]
@@ -21,4 +35,4 @@
              tiles
              (recur (inc n) (assoc tiles [(+ start-x (mod n size))
                                           (+ start-y (quot n size))]
-                                   (Tile. (sqr-room-tile-type n size) true)))))))))
+                                   (Tile. :floor true)))))))))
