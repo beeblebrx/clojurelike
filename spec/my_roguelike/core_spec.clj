@@ -35,6 +35,17 @@
                         y (range start-y (+ start-y 7))]
                   (should (get room [x y]))))))
 
+(describe "Ring room generator"
+          (it "should create a room (or corridor) the shape of ring"
+              (let [room ((ring-room-gen 0 0 2))
+                    coords [[2 -1] [0 -2] [1 1] [-1 2] [-1 -1] [-1 -2] [-2 1]
+                            [-2 -1] [1 -1] [0 2] [-1 1] [2 0] [2 1] [1 2]
+                            [1 -2] [-2 0]]]
+                (should= 16 (count room))
+                (doseq [tile room]
+                  (should (some #(= % (key tile)) coords))
+                  (should= :floor (:type (val tile)))))))
+
 (describe "Wall builder"
           (it "should create walls around a square room"
               (let [room ((square-room-gen 0 0 3))]
