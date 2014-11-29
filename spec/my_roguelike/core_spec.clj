@@ -29,7 +29,7 @@
           (it "should create a square room at given coords with the given size"
               (let [start-x 12
                     start-y 7
-                    room ((square-room-gen start-x start-y 7))]
+                    room (square-room-gen start-x start-y 7)]
                 (should= 49 (count room))
                 (doseq [x (range start-x (+ start-x 7))
                         y (range start-y (+ start-y 7))]
@@ -37,7 +37,7 @@
 
 (describe "Ring room generator"
           (it "should create a room (or corridor) the shape of ring"
-              (let [room ((ring-room-gen 0 0 2))
+              (let [room (ring-room-gen 0 0 2)
                     coords [[2 -1] [0 -2] [1 1] [-1 2] [-1 -1] [-1 -2] [-2 1]
                             [-2 -1] [1 -1] [0 2] [-1 1] [2 0] [2 1] [1 2]
                             [1 -2] [-2 0]]]
@@ -48,7 +48,7 @@
 
 (describe "Wall builder"
           (it "should create walls around a square room"
-              (let [room ((square-room-gen 0 0 3))]
+              (let [room (square-room-gen 0 0 3)]
                 (doseq [x (range 3)
                         y (range 3)]
                   (should= :floor (:type (get room [x y]))))

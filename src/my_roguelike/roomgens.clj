@@ -67,32 +67,29 @@
 
 (defn square-room-gen
   ([start-x start-y size]
-     (fn []
-       (when (> size 0)
-         (loop [n 0
-                tiles {}]
-           (if (= n (* size size))
-             tiles
-             (recur (inc n) (assoc tiles [(+ start-x (mod n size))
-                                          (+ start-y (quot n size))]
-                                   (Tile. :floor true)))))))))
+     (when (> size 0)
+       (loop [n 0
+              tiles {}]
+         (if (= n (* size size))
+           tiles
+           (recur (inc n) (assoc tiles [(+ start-x (mod n size))
+                                        (+ start-y (quot n size))]
+                                 (Tile. :floor true))))))))
 
 (defn ring-room-gen
   [center-x center-y radius]
-  (fn []
-    (loop [x radius
-           y 0
-           radiusError (- 1 x)
-           tiles {}]
-      (if (>= x y)
-        (if (neg? radiusError)
-          (recur x (inc y) (+ radiusError (inc (* 2 y)))
-                 (draw-circle x y center-x center-y tiles))
-          (recur (dec x) y (+ radiusError (* 2 (- y (inc x))))
-                 (draw-circle x y center-x center-y tiles)))
-        tiles))))
+  (loop [x radius
+         y 0
+         radiusError (- 1 x)
+         tiles {}]
+    (if (>= x y)
+      (if (neg? radiusError)
+        (recur x (inc y) (+ radiusError (inc (* 2 y)))
+               (draw-circle x y center-x center-y tiles))
+        (recur (dec x) y (+ radiusError (* 2 (- y (inc x))))
+               (draw-circle x y center-x center-y tiles)))
+      tiles)))
 
 (defn round-room-gen
   [center-x center-y radius]
-  (fn []
-    (fill-room ((ring-room-gen center-x center-y radius)))))
+  (fill-room (ring-room-gen center-x center-y radius)))
