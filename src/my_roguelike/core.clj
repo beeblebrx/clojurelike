@@ -1,9 +1,7 @@
 (ns my_roguelike.core
-  (:require [lanterna.screen :as s])
+  (:require [lanterna.screen :as s]
+            [my_roguelike.levels.levelgens :as levels])
   (:gen-class :main true))
-
-(load "roomgens")
-(load "levelgens")
 
 (defn get-glyph
   [tile-type]
@@ -15,7 +13,7 @@
          n 1]
     (if (> n levels)
       map-of-levels
-      (recur (assoc map-of-levels (keyword (str n)) (level-generator)) (inc n)))))
+      (recur (assoc map-of-levels (keyword (str n)) (levels/level-generator)) (inc n)))))
 
 (defn start-game
   []

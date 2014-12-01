@@ -1,6 +1,8 @@
 (ns my_roguelike.core-spec
   (:require [speclj.core :refer :all]
-            [my_roguelike.core :refer :all]))
+            [my_roguelike.core :refer :all]
+            [my_roguelike.levels.levelgens :as levels]
+            [my_roguelike.levels.roomgens :as rooms]))
 
 (describe "Game"
           (it "should start from turn 1"
@@ -18,18 +20,19 @@
 
 (describe "Level generator"
           (it "should generate levels with a tile buffer that has tiles in it"
-              (should (> (count (:tilebuffer (level-generator))) 0)))
+              (should (> (count (:tilebuffer (levels/level-generator))) 0)))
           (it "should give [x y] keys to tiles in the buffer"
-              (should (vector? (key (first (:tilebuffer (level-generator))))))
-              (should= 2 (count (key (first (:tilebuffer (level-generator)))))))
+              (should (vector? (key (first (:tilebuffer (levels/level-generator))))))
+              (should= 2 (count (key (first (:tilebuffer (levels/level-generator)))))))
           (it "should represent a tile in the buffer with a Tile record"
-              (should (instance? my_roguelike.core.Tile (val (first (:tilebuffer (level-generator))))))))
+              (should (instance? my_roguelike.levels.roomgens.Tile
+                                 (val (first (:tilebuffer (levels/level-generator))))))))
 
 (describe "Square room generator"
           (it "should create a square room at given coords with the given size"
               (let [start-x 12
                     start-y 7
-                    room (square-room-gen start-x start-y 7)]
+                    room (rooms/square-room-gen start-x start-y 7)]
                 (should= 49 (count room))
                 (doseq [x (range start-x (+ start-x 7))
                         y (range start-y (+ start-y 7))]
@@ -37,7 +40,7 @@
 
 (describe "Ring room generator"
           (it "should create a room (or corridor) the shape of ring"
-              (let [room (ring-room-gen 0 0 2)
+              (let [room (rooms/ring-room-gen 0 0 2)
                     coords [[2 -1] [0 -2] [1 1] [-1 2] [-1 -1] [-1 -2] [-2 1]
                             [-2 -1] [1 -1] [0 2] [-1 1] [2 0] [2 1] [1 2]
                             [1 -2] [-2 0]]]
@@ -48,11 +51,11 @@
 
 (describe "Wall builder"
           (it "should create walls around a square room"
-              (let [room (square-room-gen 0 0 3)]
+              (let [room (rooms/square-room-gen 0 0 3)]
                 (doseq [x (range 3)
                         y (range 3)]
                   (should= :floor (:type (get room [x y]))))
-                (let [walled-room (build-walls room)]
+                (let [walled-room (rooms/build-walls room)]
                   (doseq [x (range -1 4)
                           y (range -1 4)]
                     (if (or (or (= x -1) (= x 3))
@@ -67,4 +70,4 @@
                              (if (= type :floor)
                                (should= "." glyph)
                                (should= "#" glyph)))
-                          (:tilebuffer (level-generator))))))
+                          (:tilebuffer (levels/level-generator))))))

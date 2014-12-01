@@ -1,4 +1,5 @@
-(in-ns 'my_roguelike.core)
+(ns my_roguelike.levels.roomgens
+  (:refer-clojure))
 
 (defrecord Tile [type lit])
 
