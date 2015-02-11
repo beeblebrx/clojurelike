@@ -36,7 +36,9 @@
                 (should= 49 (count room))
                 (doseq [x (range start-x (+ start-x 7))
                         y (range start-y (+ start-y 7))]
-                  (should (get room [x y]))))))
+                  (should (get room [x y])))))
+          (it "should create no tiles if the size is 0"
+              (should= 0 (count (rooms/square-room-gen 0 0 0)))))
 
 (describe "Ring room generator"
           (it "should create a room (or corridor) the shape of ring"
@@ -47,7 +49,10 @@
                 (should= 16 (count room))
                 (doseq [tile room]
                   (should (some #(= % (key tile)) coords))
-                  (should= :floor (:type (val tile)))))))
+                  (should= :floor (:type (val tile))))))
+          (it "should create just one tile to [0 0] if radius is 0"
+              (should= 1 (count (rooms/ring-room-gen 0 0 0)))
+              (should= [0 0] (first (keys (rooms/ring-room-gen 0 0 0))))))
 
 (describe "Wall builder"
           (it "should create walls around a square room"
@@ -61,7 +66,9 @@
                     (if (or (or (= x -1) (= x 3))
                             (or (= y -1) (= y 3)))
                       (should= :wall (:type (get walled-room [x y])))
-                      (should= :floor (:type (get walled-room [x y])))))))))
+                      (should= :floor (:type (get walled-room [x y]))))))))
+          (it "should not implode when asked to wall a room without tiles"
+              (rooms/build-walls (rooms/square-room-gen 0 0 0))))
 
 (describe "Level drawing"
           (it "should draw floor tiles with '.' and walls with '#'"
