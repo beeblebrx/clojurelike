@@ -5,9 +5,11 @@
 
 (defn- surrounding-coords
   [x y]
-  (for [xx [(dec x) x (inc x)]
-        yy [(dec y) y (inc y)]]
-    [xx yy]))
+  "Return coordinates surrounding (x,y)"
+  (remove #(= [x y] %)
+          (for [xx [(dec x) x (inc x)]
+                yy [(dec y) y (inc y)]]
+            [xx yy])))
 
 (defn- coords-inside
   [row tilebuffer]
