@@ -11,8 +11,26 @@
                 (doseq [x (range start-x (+ start-x 7))
                         y (range start-y (+ start-y 7))]
                   (should (get room [x y])))))
-          (it "should create no tiles if the size is 0"
-              (should= 0 (count (rooms/square-room-gen 0 0 0)))))
+          (it "should create no tiles if size is 0"
+              (should= 0 (count (rooms/square-room-gen 0 0 0))))
+          (it "should create no tiles if size is negative"
+              (should= 0 (count (rooms/square-room-gen 1 1 -1)))))
+
+(describe "Rectangular room generator"
+          (it "should create a rectangular room at given coords with given width and height"
+              (let [room-x 3
+                    room-y 5
+                    room (rooms/rectangle-room-gen room-x room-y 2 4)]
+                (should= 8 (count room))
+                (doseq [x (range room-x (+ room-x 2))
+                        y (range room-y (+ room-y 4))]
+                  (should (get room [x y])))))
+          (it "should create no tiles if width or height is 0"
+              (should= 0 (count (rooms/rectangle-room-gen 2 2 10000 0)))
+              (should= 0 (count (rooms/rectangle-room-gen 3 3 0 10000))))
+          (it "should create no tiles if width or height is negative"
+              (should= 0 (count (rooms/rectangle-room-gen 1 1 -1 1)))
+              (should= 0 (count (rooms/rectangle-room-gen 1 1 1 -1)))))
 
 (describe "Ring room generator"
           (it "should create a room (or corridor) the shape of ring"

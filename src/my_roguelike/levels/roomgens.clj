@@ -68,16 +68,20 @@
       (recur (assoc tiles (first walls) (Tile. :wall false))
              (rest walls)))))
 
+(defn rectangle-room-gen
+  [start-x start-y width height]
+  (when (and (> width 0) (> height 0))
+    (loop [n 0
+           tiles {}]
+      (if (= n (* width height))
+        tiles
+        (recur (inc n) (assoc tiles [(+ start-x (mod n width))
+                                     (+ start-y (quot n width))]
+                              (Tile. :floor true)))))))
+
 (defn square-room-gen
-  ([start-x start-y size]
-     (when (> size 0)
-       (loop [n 0
-              tiles {}]
-         (if (= n (* size size))
-           tiles
-           (recur (inc n) (assoc tiles [(+ start-x (mod n size))
-                                        (+ start-y (quot n size))]
-                                 (Tile. :floor true))))))))
+  [start-x start-y size]
+  (rectangle-room-gen start-x start-y size size))
 
 (defn ring-room-gen
   [center-x center-y radius]
