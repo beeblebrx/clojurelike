@@ -6,10 +6,11 @@
           (it "should create a square room at given coords with the given size"
               (let [start-x 12
                     start-y 7
-                    room (rooms/square-room-gen start-x start-y 7)]
+                    size 7
+                    room (rooms/square-room-gen start-x start-y size)]
                 (should= 49 (count room))
-                (doseq [x (range start-x (+ start-x 7))
-                        y (range start-y (+ start-y 7))]
+                (doseq [x (range start-x (+ start-x size))
+                        y (range start-y (+ start-y size))]
                   (should (get room [x y])))))
           (it "should create no tiles if size is 0"
               (should= 0 (count (rooms/square-room-gen 0 0 0))))
@@ -20,10 +21,12 @@
           (it "should create a rectangular room at given coords with given width and height"
               (let [room-x 3
                     room-y 5
-                    room (rooms/rectangle-room-gen room-x room-y 2 4)]
+                    width 2
+                    height 4
+                    room (rooms/rectangle-room-gen room-x room-y width height)]
                 (should= 8 (count room))
-                (doseq [x (range room-x (+ room-x 2))
-                        y (range room-y (+ room-y 4))]
+                (doseq [x (range room-x (+ room-x width))
+                        y (range room-y (+ room-y height))]
                   (should (get room [x y])))))
           (it "should create no tiles if width or height is 0"
               (should= 0 (count (rooms/rectangle-room-gen 2 2 10000 0)))
@@ -48,15 +51,18 @@
 
 (describe "Wall builder"
           (it "should create walls around a square room"
-              (let [room (rooms/square-room-gen 0 0 3)]
-                (doseq [x (range 3)
-                        y (range 3)]
+              (let [size 3
+                    origin-x 0
+                    origin-y 0
+                    room (rooms/square-room-gen origin-x origin-y size)]
+                (doseq [x (range origin-x size)
+                        y (range origin-y size)]
                   (should= :floor (:type (get room [x y]))))
                 (let [walled-room (rooms/build-walls room)]
-                  (doseq [x (range -1 4)
-                          y (range -1 4)]
-                    (if (or (or (= x -1) (= x 3))
-                            (or (= y -1) (= y 3)))
+                  (doseq [x (range (dec origin-x) (inc size))
+                          y (range (dec origin-y) (inc size))]
+                    (if (or (or (= x (dec origin-x)) (= x size))
+                            (or (= y (dec origin-y)) (= y size)))
                       (should= :wall (:type (get walled-room [x y])))
                       (should= :floor (:type (get walled-room [x y]))))))))
           (it "should not implode when asked to wall a room without tiles"
